@@ -9,6 +9,8 @@ import {
   PhoneOff,
   RadioTower,
   Users,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getMeetingMedia } from "./media";
@@ -41,6 +43,7 @@ export function App() {
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [peers, setPeers] = useState<PeerView[]>([]);
   const [micEnabled, setMicEnabled] = useState(true);
+  const [speakerEnabled, setSpeakerEnabled] = useState(false);
   const [cameraEnabled, setCameraEnabled] = useState(true);
   const [screenSharing, setScreenSharing] = useState(false);
   const socketRef = useRef<WebSocket | null>(null);
@@ -252,6 +255,10 @@ export function App() {
     setMicEnabled(next);
   };
 
+  const toggleSpeaker = () => {
+    setSpeakerEnabled((enabled) => !enabled);
+  };
+
   const toggleCamera = () => {
     const next = !cameraEnabled;
     for (const track of localStreamRef.current?.getVideoTracks() ?? []) {
@@ -333,6 +340,7 @@ export function App() {
                   key={peer.id}
                   name={peer.name}
                   stream={peer.stream}
+                  muted={!speakerEnabled}
                   status={peer.status}
                 />
               ))}
@@ -377,6 +385,16 @@ export function App() {
           title={micEnabled ? "Mute microphone" : "Unmute microphone"}
         >
           {micEnabled ? <Mic /> : <MicOff />}
+        </button>
+        <button
+          type="button"
+          className="icon-button"
+          onClick={toggleSpeaker}
+          disabled={joinState !== "joined"}
+          aria-label={speakerEnabled ? "Mute speaker" : "Unmute speaker"}
+          title={speakerEnabled ? "Mute speaker" : "Unmute speaker"}
+        >
+          {speakerEnabled ? <Volume2 /> : <VolumeX />}
         </button>
         <button
           type="button"
