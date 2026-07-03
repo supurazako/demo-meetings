@@ -25,5 +25,8 @@ export function signalingUrl() {
     return explicit;
   }
   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  if (window.location.protocol === "https:") {
+    return `${protocol}//${window.location.host}/ws`;
+  }
   return `${protocol}//${window.location.hostname}:3001`;
 }

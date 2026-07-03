@@ -1,4 +1,10 @@
 export async function getMeetingMedia() {
+  if (!canRequestDevicePermission()) {
+    throw new Error(
+      "Camera and microphone permissions require localhost or HTTPS. Open this app over HTTPS when joining from another device.",
+    );
+  }
+
   try {
     return await navigator.mediaDevices.getUserMedia({
       video: {
@@ -12,9 +18,23 @@ export async function getMeetingMedia() {
         autoGainControl: true,
       },
     });
-  } catch {
-    return createFallbackMedia();
+  } catch (error) {
+    if (error instanceof DOMException) {
+      if (error.name === "NotFoundError" || error.name === "OverconstrainedError") {
+        return createFallbackMedia();
+      }
+      if (error.name === "NotAllowedError" || error.name === "SecurityError") {
+        throw new Error(
+          "Camera or microphone access was blocked. Allow device access in the browser and try again.",
+        );
+      }
+    }
+    throw new Error("Could not start camera or microphone.");
   }
+}
+
+function canRequestDevicePermission() {
+  return Boolean(navigator.mediaDevices?.getUserMedia) && window.isSecureContext;
 }
 
 function createFallbackMedia() {

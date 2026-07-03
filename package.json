@@ -4,9 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "demo": "node scripts/start-demo.mjs",
+    "demo:tunnel": "node scripts/start-demo.mjs --tunnel",
     "dev": "concurrently -k \"npm:dev:client\" \"npm:dev:signaling\"",
     "dev:client": "vite --host 0.0.0.0",
     "dev:signaling": "tsx server/signaling.ts",
+    "turn:config": "node scripts/start-demo.mjs --turn-config",
+    "turn:up": "node scripts/start-demo.mjs --turn-only",
+    "turn:down": "docker compose down",
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "start:signaling": "node dist-server/signaling.js"

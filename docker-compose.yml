@@ -4,5 +4,5 @@ services:
     restart: unless-stopped
     network_mode: host
     volumes:
-      - ./turnserver.conf:/etc/coturn/turnserver.conf:ro
+      - ${TURN_CONFIG_FILE:-./turnserver.conf}:/etc/coturn/turnserver.conf:ro
     command: ["-c", "/etc/coturn/turnserver.conf"]
